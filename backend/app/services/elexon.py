@@ -6,8 +6,8 @@ import httpx
 from app.config import get_settings
 from app.services.cache import JsonCache
 
-UTC = UTC
-REQUEST_TIMEOUT = 45.0
+# Managed hosts (Render 100s, Heroku 30s) cap responses; fail fast rather than stall a dyno.
+REQUEST_TIMEOUT = 25.0
 
 class ElexonError(RuntimeError):
     pass
