@@ -30,7 +30,7 @@ export function OperatorShell({
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex h-dvh overflow-hidden bg-white">
       {/* Desktop & Mobile Sidebar */}
       <Sidebar
         currentSection={currentSection}
@@ -52,10 +52,13 @@ export function OperatorShell({
         />
         <SourceStrip />
 
-        <main className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 max-w-7xl w-full mx-auto">
-          {children}
-          <Footer />
-        </main>
+        {/* Only the content pane scrolls; the sidebar and top chrome stay pinned. */}
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+            {children}
+            <Footer />
+          </main>
+        </div>
       </div>
     </div>
   );
