@@ -1,0 +1,23 @@
+# Render Blueprint for the Northstar Wind Intelligence API.
+# Deploy via "New +" -> "Blueprint" and select this repository.
+services:
+  - type: web
+    name: northstar-wind-api
+    runtime: python
+    plan: free # swap to starter to avoid spin-down cold starts
+    rootDir: backend
+    pythonVersion: '3.13'
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ELEXON_API_BASE
+        value: https://data.elexon.co.uk/bmrs/api/v1
+      - key: CORS_ORIGINS
+        sync: false # exact production frontend origins, e.g. https://northstar-wind.vercel.app
+      - key: CORS_ORIGIN_REGEX
+        value: https://.*\.vercel\.app # covers Vercel preview URLs; set empty to disable
+      - key: DATA_CACHE_DIR
+        value: /tmp/elexon-cache
+      - key: DATA_CACHE_TTL_SECONDS
+        value: '3600'
