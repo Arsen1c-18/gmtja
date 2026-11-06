@@ -18,6 +18,7 @@ The product is decision support. It does not model dispatch, market prices, bala
 
 - Frontend: React, TypeScript, Vite, Recharts, Lucide icons and a responsive CSS implementation based on `UI_DESIGN_GUIDE.md`.
 - Backend: Python, FastAPI, Pydantic, NumPy and Pandas-compatible analytics.
+- Quality: oxlint and Prettier for the frontend, Ruff for the backend (`npm run lint`, `npm run format:check`, `ruff check backend`), pytest for backend logic and API tests.
 - Deployment: Docker Compose, Vercel static frontend support and a standalone Python API container.
 
 ## Architecture
@@ -31,15 +32,22 @@ React/Vite UI ──GET──> FastAPI ──> Elexon public BMRS API
 ```
 
 ```text
+src/
+  App.tsx                     # operator shell and view routing
+  components/                 # layout shell, UI primitives and chart components
+  features/                   # overview, explorer, accuracy, procurement, history views
+  services/api.ts             # typed frontend API client
+  types.ts                    # mirror of backend response schemas
+  utils/                      # chart helpers, CSV export and formatters
+  styles.css                  # entrypoint for design tokens and layout styles
+```
+
+```text
 backend/app/
   analytics/wind.py       # metrics, interval alignment, procurement arithmetic
   api/routes.py           # HTTP endpoints and request validation
   models/schemas.py       # typed response models
-  services/elexon.py      # BMRS client and request cache
-src/
-  App.tsx                 # operator shell and workspaces
-  services/api.ts         # typed frontend API client
-  styles.css              # design tokens, responsive layout and chart styling
+  services/elexon.py      # pooled BMRS client and disk cache
 ```
 
 ## Data source and API use
@@ -94,6 +102,13 @@ cd backend
 uvicorn app.main:app --reload --port 8000
 ```
 
+Alternatively, once the virtualenv is created and activated, both processes can be driven from the project root:
+
+```bash
+npm run dev:api            # uvicorn on :8000 (requires the venv to be activated)
+npm run dev              # Vite on :5173
+```
+
 Open `http://localhost:5173`. If frontend and backend share a host, `VITE_API_URL` may be empty; otherwise point it at the API origin. Set `CORS_ORIGINS` to the exact frontend origins.
 
 ## Docker
@@ -130,6 +145,9 @@ Deploy the root Dockerfile to a Python container host (or deploy `backend/` with
 ```bash
 cd backend && pytest -q
 npm run build
+npm run lint
+npm run format:check
+ruff check backend
 curl http://localhost:8000/health
 curl http://localhost:8000/api/days/2026-01-15
 ```
