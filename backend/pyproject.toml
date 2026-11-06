@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+# E701/E702 (single-line if/try statements) are an established compact style in this codebase.
+ignore = ["E701", "E702"]
+select = ["E", "F", "W", "I", "B", "UP", "NPY"]
