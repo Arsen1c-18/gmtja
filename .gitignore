@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.venv/
+**/.venv/
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Python artifacts
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+**/.pytest_cache/
+
+# Cache directories
+.cache/
+**/.cache/
+
+# Environment files and secrets
+.env
+.env*.local
+*.pem
+*.key
+*.cert
+*.secret
+
+# Logs
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
