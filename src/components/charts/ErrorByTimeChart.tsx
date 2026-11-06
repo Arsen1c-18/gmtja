@@ -1,12 +1,4 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { compactFmt, numFmt } from '../../utils/formatters';
 
 export interface TimeBucket {
@@ -39,10 +31,7 @@ export function ErrorByTimeChart({ data, height = 260 }: ErrorByTimeChartProps) 
             width={48}
           />
           <Tooltip
-            formatter={(v) => [
-              v == null ? '—' : `${numFmt.format(Number(v))} MW`,
-              'MAE',
-            ]}
+            formatter={(v) => [v == null ? '—' : `${numFmt.format(Number(v))} MW`, 'MAE']}
             contentStyle={{
               borderRadius: '4px',
               border: '1px solid #e4e4e7',

@@ -40,13 +40,21 @@ export function OverviewView({
         <KpiCard
           label="Day-ahead forecast"
           value={data.eligible_publish_time ? formatCompact(dayForecastMWh, ' MWh') : 'Unavailable'}
-          hint={data.eligible_publish_time ? 'Forecast energy · cutoff eligible' : 'No release before the 11:00 cutoff'}
+          hint={
+            data.eligible_publish_time
+              ? 'Forecast energy · cutoff eligible'
+              : 'No release before the 11:00 cutoff'
+          }
           icon={WindTurbineSvg}
         />
         <KpiCard
           label="Latest observed outturn"
           value={formatNice(actualCurrent, ' MW')}
-          hint={actualCurrent == null ? 'Actuals not yet available' : 'Latest interval with a valid actual'}
+          hint={
+            actualCurrent == null
+              ? 'Actuals not yet available'
+              : 'Latest interval with a valid actual'
+          }
           icon={Activity}
         />
         <KpiCard
@@ -58,7 +66,11 @@ export function OverviewView({
         <KpiCard
           label="Scenario residual requirement"
           value={data.eligible_publish_time ? formatCompact(shortfall, ' MWh') : 'Unavailable'}
-          hint={data.eligible_publish_time ? `Fixed ${formatNice(demand)} MW demand less wind` : 'No cutoff-eligible forecast'}
+          hint={
+            data.eligible_publish_time
+              ? `Fixed ${formatNice(demand)} MW demand less wind`
+              : 'No cutoff-eligible forecast'
+          }
           icon={Scale}
           tone="warn"
         />

@@ -11,7 +11,7 @@ export function MarketReadPanel({ data }: MarketReadPanelProps) {
   const latestVersion = data.versions[data.versions.length - 1];
   const latestMWh = latestVersion?.intervals.reduce(
     (sum, interval) => sum + (interval.forecast_mw ?? 0) * 0.5,
-    0
+    0,
   );
   const latestStamp = data.latest_publish_time
     ? stampFmt.format(new Date(data.latest_publish_time))
@@ -19,10 +19,7 @@ export function MarketReadPanel({ data }: MarketReadPanelProps) {
 
   return (
     <Card className="h-full">
-      <CardHeader
-        title="Market read"
-        subtitle="Signals from the selected delivery day"
-      />
+      <CardHeader title="Market read" subtitle="Signals from the selected delivery day" />
       <CardContent className="space-y-4">
         {/* Signal block for cutoff */}
         <div className="rounded-md border border-ink-200/80 bg-ink-50/60 p-3.5">
@@ -70,7 +67,8 @@ export function MarketReadPanel({ data }: MarketReadPanelProps) {
         <div className="flex items-start gap-2.5 rounded-md bg-accent-50/50 p-2.5 text-xs text-ink-700 border border-accent-200/50">
           <CircleHelp size={15} className="text-accent-700 shrink-0 mt-0.5" />
           <p className="text-[11px] leading-relaxed text-ink-600">
-            The latest available version may post-date the day-ahead cutoff. Accuracy compares paired actual and forecast intervals.
+            The latest available version may post-date the day-ahead cutoff. Accuracy compares
+            paired actual and forecast intervals.
           </p>
         </div>
       </CardContent>

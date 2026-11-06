@@ -13,10 +13,10 @@ export interface MergedIntervalRow extends Interval {
 
 export function mergeChartIntervals(
   intervals: Interval[],
-  version: ForecastVersion | null
+  version: ForecastVersion | null,
 ): MergedIntervalRow[] {
   const versionMap = new Map(
-    (version?.intervals ?? []).map((i) => [Date.parse(i.start_time), i.forecast_mw])
+    (version?.intervals ?? []).map((i) => [Date.parse(i.start_time), i.forecast_mw]),
   );
 
   return intervals.map((i) => {
@@ -40,9 +40,16 @@ export function mergeChartIntervals(
 }
 
 export function exportToCsv(rows: MergedIntervalRow[], day: string): void {
-  const header = ['target_time_local', 'settlement_period', 'forecast_mw', 'actual_mw', 'error_mw', 'forecast_publish_time'];
+  const header = [
+    'target_time_local',
+    'settlement_period',
+    'forecast_mw',
+    'actual_mw',
+    'error_mw',
+    'forecast_publish_time',
+  ];
   const body = rows.map((r, idx) => {
-    const err = r.forecast != null && r.actual != null ? (r.forecast - r.actual) : '';
+    const err = r.forecast != null && r.actual != null ? r.forecast - r.actual : '';
     return [
       `"${r.start_time}"`,
       r.settlement_period ?? idx + 1,
@@ -69,7 +76,7 @@ export function exportToCsv(rows: MergedIntervalRow[], day: string): void {
 export function exportProcurementCsv(
   rows: (MergedIntervalRow & { demand_mw?: number; requirement?: number | null })[],
   demand: number,
-  day: string
+  day: string,
 ): void {
   const header = [
     'target_time_local',
@@ -80,7 +87,8 @@ export function exportProcurementCsv(
     'residual_energy_mwh',
   ];
   const body = rows.map((r, idx) => {
-    const req = r.requirement != null ? r.requirement : (r.forecast != null ? demand - r.forecast : '');
+    const req =
+      r.requirement != null ? r.requirement : r.forecast != null ? demand - r.forecast : '';
     const mwh = req !== '' ? (Number(req) * 0.5).toFixed(1) : '';
     return [
       `"${r.start_time}"`,

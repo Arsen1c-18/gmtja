@@ -21,12 +21,7 @@ const sizeStyles = {
   lg: 'h-12 w-12',
 };
 
-export function IconTile({
-  icon,
-  tone = 'accent',
-  size = 'md',
-  className = '',
-}: IconTileProps) {
+export function IconTile({ icon, tone = 'accent', size = 'md', className = '' }: IconTileProps) {
   return (
     <span
       className={`inline-flex items-center justify-center rounded-md shrink-0 ${toneStyles[tone]} ${sizeStyles[size]} ${className}`}

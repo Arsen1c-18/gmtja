@@ -15,21 +15,13 @@ export interface HistoryViewProps {
   onSelectVersion: (version: string) => void;
 }
 
-export function HistoryView({
-  data,
-  selectedVersion,
-  onSelectVersion,
-}: HistoryViewProps) {
-  const versions = [...data.versions].sort((a, b) =>
-    a.publish_time.localeCompare(b.publish_time)
-  );
+export function HistoryView({ data, selectedVersion, onSelectVersion }: HistoryViewProps) {
+  const versions = [...data.versions].sort((a, b) => a.publish_time.localeCompare(b.publish_time));
 
   const latest = versions[versions.length - 1];
   const initial = versions[0];
   const improvement =
-    initial?.mae_mw != null && latest?.mae_mw != null
-      ? initial.mae_mw - latest.mae_mw
-      : null;
+    initial?.mae_mw != null && latest?.mae_mw != null ? initial.mae_mw - latest.mae_mw : null;
 
   const timelineData = versions.map((v) => ({
     publish_time: v.publish_time,
@@ -73,8 +65,8 @@ export function HistoryView({
             improvement == null
               ? 'Insufficient paired records'
               : improvement >= 0
-              ? 'Improvement: error reduced closer to gate'
-              : 'Error expanded in later run'
+                ? 'Improvement: error reduced closer to gate'
+                : 'Error expanded in later run'
           }
           icon={Activity}
         />
@@ -119,9 +111,7 @@ export function HistoryView({
                         {/* Numbered mono step (Motif 2) */}
                         <span
                           className={`flex h-7 w-7 items-center justify-center rounded-sm font-mono text-xs font-bold ${
-                            isSelected
-                              ? 'bg-accent-600 text-white'
-                              : 'bg-ink-100 text-ink-700'
+                            isSelected ? 'bg-accent-600 text-white' : 'bg-ink-100 text-ink-700'
                           }`}
                         >
                           {String(i + 1).padStart(2, '0')}
@@ -131,7 +121,8 @@ export function HistoryView({
                             {stampFmt.format(new Date(v.publish_time))}
                           </div>
                           <div className="text-[11px] text-ink-500 font-mono">
-                            {v.horizon_hours != null ? `${v.horizon_hours.toFixed(1)}h ahead` : '—'} · {v.intervals.length} periods
+                            {v.horizon_hours != null ? `${v.horizon_hours.toFixed(1)}h ahead` : '—'}{' '}
+                            · {v.intervals.length} periods
                           </div>
                         </div>
                       </div>
@@ -183,9 +174,10 @@ export function HistoryView({
         <CircleHelp size={17} className="text-accent-700 shrink-0 mt-0.5" />
         <div className="text-xs text-ink-700 leading-relaxed">
           <strong className="font-semibold text-ink-950">Publication horizon context:</strong>{' '}
-          Forecast error typically trends downward as delivery approaches due to shrinking numerical weather horizons.
-          Comparisons evaluate only the target periods published in each forecast and paired FUELHH actuals.
-          Only versions issued prior to the 11:00 UK day-ahead cutoff are considered decision-eligible for day-ahead commitment.
+          Forecast error typically trends downward as delivery approaches due to shrinking numerical
+          weather horizons. Comparisons evaluate only the target periods published in each forecast
+          and paired FUELHH actuals. Only versions issued prior to the 11:00 UK day-ahead cutoff are
+          considered decision-eligible for day-ahead commitment.
         </div>
       </div>
     </div>

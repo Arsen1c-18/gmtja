@@ -11,10 +11,7 @@ export interface AlertProps {
   className?: string;
 }
 
-const toneConfig: Record<
-  AlertTone,
-  { container: string; icon: typeof Info; iconColor: string }
-> = {
+const toneConfig: Record<AlertTone, { container: string; icon: typeof Info; iconColor: string }> = {
   info: {
     container: 'border-accent-200/80 bg-accent-50/70 text-accent-950',
     icon: Info,
@@ -37,13 +34,7 @@ const toneConfig: Record<
   },
 };
 
-export function Alert({
-  tone = 'info',
-  title,
-  children,
-  action,
-  className = '',
-}: AlertProps) {
+export function Alert({ tone = 'info', title, children, action, className = '' }: AlertProps) {
   const { container, icon: Icon, iconColor } = toneConfig[tone];
 
   return (

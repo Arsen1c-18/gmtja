@@ -5,11 +5,7 @@ export interface WindSvgProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
 }
 
-export function WindTurbineSvg({
-  size = 20,
-  className = '',
-  ...props
-}: WindSvgProps) {
+export function WindTurbineSvg({ size = 20, className = '', ...props }: WindSvgProps) {
   // Simple, closed-loop 3-blade fan matching the favicon tile
   return (
     <svg

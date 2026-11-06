@@ -21,10 +21,8 @@ const variantStyles: Record<ButtonVariant, string> = {
     'bg-ink-100 text-ink-800 hover:bg-ink-200 active:bg-ink-300 focus-visible:ring-ink-400',
   outline:
     'border border-ink-200 bg-white text-ink-800 shadow-2xs hover:bg-ink-50 hover:border-ink-300 active:bg-ink-100 focus-visible:ring-accent-600',
-  ghost:
-    'text-accent-700 hover:bg-accent-50 active:bg-accent-100 focus-visible:ring-accent-600',
-  dark:
-    'bg-ink-900 text-white hover:bg-ink-800 active:bg-ink-950 focus-visible:ring-ink-500',
+  ghost: 'text-accent-700 hover:bg-accent-50 active:bg-accent-100 focus-visible:ring-accent-600',
+  dark: 'bg-ink-900 text-white hover:bg-ink-800 active:bg-ink-950 focus-visible:ring-ink-500',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -46,7 +44,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <button
@@ -65,7 +63,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

@@ -54,10 +54,7 @@ export function ProcurementView({
     requirement: r.forecast == null ? null : demand - r.forecast,
   }));
 
-  const expectedWindMWh = rows.reduce(
-    (sum, r) => sum + (r.forecast ?? 0) * 0.5,
-    0
-  );
+  const expectedWindMWh = rows.reduce((sum, r) => sum + (r.forecast ?? 0) * 0.5, 0);
 
   return (
     <div className="space-y-6">
@@ -71,7 +68,8 @@ export function ProcurementView({
             Set fixed system demand assumption
           </h2>
           <p className="mt-1 text-xs text-ink-600 leading-relaxed">
-            Configure an illustrative demand baseline in MW to compute net residual procurement requirements against forecast wind.
+            Configure an illustrative demand baseline in MW to compute net residual procurement
+            requirements against forecast wind.
           </p>
 
           {/* Quick Scenario Preset Chips */}
@@ -111,9 +109,7 @@ export function ProcurementView({
               max={100000}
               step={500}
               value={demand}
-              onChange={(e) =>
-                setDemand(Math.min(100000, Math.max(100, Number(e.target.value))))
-              }
+              onChange={(e) => setDemand(Math.min(100000, Math.max(100, Number(e.target.value))))}
               className="font-mono font-semibold text-base"
             />
           </label>
@@ -124,7 +120,9 @@ export function ProcurementView({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           label="Expected wind energy"
-          value={data.eligible_publish_time ? formatCompact(expectedWindMWh, ' MWh') : 'Unavailable'}
+          value={
+            data.eligible_publish_time ? formatCompact(expectedWindMWh, ' MWh') : 'Unavailable'
+          }
           hint="Integrated over 30-min settlement periods"
           icon={WindTurbineSvg}
         />
@@ -183,10 +181,7 @@ export function ProcurementView({
 
           <div style={{ height: 340 }} className="w-full min-w-0 pt-2">
             <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart
-                data={rows}
-                margin={{ left: -10, right: 12, top: 12, bottom: 0 }}
-              >
+              <ComposedChart data={rows} margin={{ left: -10, right: 12, top: 12, bottom: 0 }}>
                 <CartesianGrid stroke="#e4e4e7" strokeDasharray="2 2" vertical={false} />
                 <XAxis
                   dataKey="label"
@@ -203,11 +198,7 @@ export function ProcurementView({
                   width={48}
                 />
                 <Tooltip content={<ChartTooltip unit="MW" />} />
-                <ReferenceLine
-                  y={demand}
-                  stroke="#a1a1aa"
-                  strokeDasharray="4 4"
-                />
+                <ReferenceLine y={demand} stroke="#a1a1aa" strokeDasharray="4 4" />
                 <Area
                   dataKey="forecast"
                   name="Forecast wind"
@@ -242,10 +233,12 @@ export function ProcurementView({
         <AlertTriangle size={18} className="text-amber-700 shrink-0 mt-0.5" />
         <div className="text-xs text-ink-700 leading-relaxed">
           <strong className="font-semibold text-ink-950">Simplified procurement estimate:</strong>{' '}
-          Additional Procurement = Demand Baseline − Forecast Wind Generation, integrated over 30-minute intervals.
-          A negative value indicates expected wind generation exceeds this illustrative baseline.
-          This model does not include thermal generation, nuclear, interconnection, hydro, battery storage, network transmission constraints, system inertia, or dynamic market prices.
-          It serves as analytical decision support, not an automated dispatch system.
+          Additional Procurement = Demand Baseline − Forecast Wind Generation, integrated over
+          30-minute intervals. A negative value indicates expected wind generation exceeds this
+          illustrative baseline. This model does not include thermal generation, nuclear,
+          interconnection, hydro, battery storage, network transmission constraints, system inertia,
+          or dynamic market prices. It serves as analytical decision support, not an automated
+          dispatch system.
         </div>
       </div>
     </div>

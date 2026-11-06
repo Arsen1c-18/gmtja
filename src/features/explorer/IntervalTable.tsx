@@ -28,7 +28,9 @@ export function IntervalTable({ chartData, deliveryDate, onExportCsv }: Interval
       if (!matchesSearch) return false;
 
       if (filterMode === 'errors') {
-        return row.forecast != null && row.actual != null && Math.abs(row.forecast - row.actual) > 500;
+        return (
+          row.forecast != null && row.actual != null && Math.abs(row.forecast - row.actual) > 500
+        );
       }
       if (filterMode === 'peaks') {
         return (row.actual ?? 0) > 10000 || (row.forecast ?? 0) > 10000;
@@ -44,12 +46,7 @@ export function IntervalTable({ chartData, deliveryDate, onExportCsv }: Interval
         title="Interval detail"
         subtitle={`${numFmt.format(filteredRows.length)} of ${numFmt.format(chartData.length)} settlement periods displayed`}
         action={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onExportCsv}
-            icon={<Download size={13} />}
-          >
+          <Button variant="outline" size="sm" onClick={onExportCsv} icon={<Download size={13} />}>
             Export CSV
           </Button>
         }
@@ -153,17 +150,17 @@ export function IntervalTable({ chartData, deliveryDate, onExportCsv }: Interval
                         errorVal == null
                           ? 'text-ink-400'
                           : errorVal > 0
-                          ? 'text-amber-700'
-                          : errorVal < 0
-                          ? 'text-ink-900'
-                          : 'text-emerald-700'
+                            ? 'text-amber-700'
+                            : errorVal < 0
+                              ? 'text-ink-900'
+                              : 'text-emerald-700'
                       }`}
                     >
                       {errorVal == null
                         ? '—'
                         : errorVal > 0
-                        ? `+${formatNice(errorVal)}`
-                        : formatNice(errorVal)}
+                          ? `+${formatNice(errorVal)}`
+                          : formatNice(errorVal)}
                     </td>
                     <td className="py-2.5 pl-3 pr-4 sm:pr-6 text-right text-ink-500 font-sans text-[11px]">
                       {row.forecast_publish_time

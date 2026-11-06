@@ -32,10 +32,7 @@ export function ExplorerView({
             Forecast version:
           </label>
           <div className="w-full sm:w-80">
-            <Select
-              value={selectedVersion}
-              onChange={(e) => onSelectVersion(e.target.value)}
-            >
+            <Select value={selectedVersion} onChange={(e) => onSelectVersion(e.target.value)}>
               <option value="cutoff">Day-ahead eligible · 11:00 cutoff</option>
               {data.versions.map((v) => (
                 <option value={v.publish_time} key={v.publish_time}>
@@ -70,7 +67,8 @@ export function ExplorerView({
           <GenerationChart chartData={chartData} />
         </CardContent>
         <CardFooter>
-          Target interval is shown in UK local time Europe/London. Actuals are reported by FUELHH; forecasts by WINDFOR.
+          Target interval is shown in UK local time Europe/London. Actuals are reported by FUELHH;
+          forecasts by WINDFOR.
         </CardFooter>
       </Card>
 

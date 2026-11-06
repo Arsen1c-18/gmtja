@@ -53,5 +53,5 @@ export function formatCompact(value: number | null | undefined, suffix = ''): st
 
 export const JANUARY_2026_DAYS = Array.from(
   { length: 31 },
-  (_, i) => `2026-01-${String(i + 1).padStart(2, '0')}`
+  (_, i) => `2026-01-${String(i + 1).padStart(2, '0')}`,
 );

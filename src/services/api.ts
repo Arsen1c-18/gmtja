@@ -27,7 +27,9 @@ export async function getDay(day: string, forceRefresh = false): Promise<DayData
   return data;
 }
 
-export async function getMonthlyAccuracy(forceRefresh = false): Promise<{ month: string; days: DailyMetric[] }> {
+export async function getMonthlyAccuracy(
+  forceRefresh = false,
+): Promise<{ month: string; days: DailyMetric[] }> {
   if (!forceRefresh && monthlyCache) {
     return monthlyCache;
   }

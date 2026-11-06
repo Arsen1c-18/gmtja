@@ -6,12 +6,14 @@ export function SourceStrip() {
         ELEXON BMRS SOURCE
       </div>
       <div className="text-ink-400">·</div>
-      <div>Actuals: <span className="font-semibold text-ink-800">FUELHH · WIND</span></div>
-      <div className="text-ink-400">·</div>
-      <div>Forecasts: <span className="font-semibold text-ink-800">WINDFOR</span></div>
-      <div className="ml-auto text-ink-500 font-mono text-[10px]">
-        Europe/London (UK local)
+      <div>
+        Actuals: <span className="font-semibold text-ink-800">FUELHH · WIND</span>
       </div>
+      <div className="text-ink-400">·</div>
+      <div>
+        Forecasts: <span className="font-semibold text-ink-800">WINDFOR</span>
+      </div>
+      <div className="ml-auto text-ink-500 font-mono text-[10px]">Europe/London (UK local)</div>
     </div>
   );
 }

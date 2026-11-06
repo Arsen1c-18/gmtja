@@ -41,12 +41,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         ref={ref}
         className={`w-full rounded-md border ${
-          error ? 'border-rose-400 focus:border-rose-600 focus:ring-rose-500/20' : 'border-ink-200 hover:border-ink-300 focus:border-accent-700 focus:ring-accent-700/20'
+          error
+            ? 'border-rose-400 focus:border-rose-600 focus:ring-rose-500/20'
+            : 'border-ink-200 hover:border-ink-300 focus:border-accent-700 focus:ring-accent-700/20'
         } bg-white px-3.5 py-2.5 sm:py-2 text-base sm:text-sm text-ink-900 placeholder:text-ink-400 shadow-2xs transition-all duration-150 focus:outline-none focus:ring-2 disabled:bg-ink-50 disabled:text-ink-400 ${className}`}
         {...props}
       />
     );
-  }
+  },
 );
 Input.displayName = 'Input';
 
@@ -61,7 +63,9 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           className={`w-full appearance-none rounded-md border ${
-            error ? 'border-rose-400 focus:border-rose-600 focus:ring-rose-500/20' : 'border-ink-200 hover:border-ink-300 focus:border-accent-700 focus:ring-accent-700/20'
+            error
+              ? 'border-rose-400 focus:border-rose-600 focus:ring-rose-500/20'
+              : 'border-ink-200 hover:border-ink-300 focus:border-accent-700 focus:ring-accent-700/20'
           } bg-white pl-3.5 pr-8 py-2.5 sm:py-2 text-base sm:text-sm text-ink-900 shadow-2xs transition-all duration-150 focus:outline-none focus:ring-2 disabled:bg-ink-50 disabled:text-ink-400 cursor-pointer ${className}`}
           {...props}
         >
@@ -72,6 +76,6 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 Select.displayName = 'Select';

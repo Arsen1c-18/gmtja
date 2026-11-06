@@ -1,12 +1,4 @@
-import {
-  Clock3,
-  Compass,
-  Gauge,
-  LayoutDashboard,
-  Scale,
-  X,
-  type LucideIcon,
-} from 'lucide-react';
+import { Clock3, Compass, Gauge, LayoutDashboard, Scale, X, type LucideIcon } from 'lucide-react';
 import { WindTurbineSvg } from '../ui/WindTurbineSvg';
 import { Badge } from '../ui/Badge';
 
@@ -103,13 +95,13 @@ export function Sidebar({
                 <div className="flex items-center gap-2.5">
                   <Icon
                     size={17}
-                    className={isActive ? 'text-accent-700' : 'text-ink-500 group-hover:text-ink-900'}
+                    className={
+                      isActive ? 'text-accent-700' : 'text-ink-500 group-hover:text-ink-900'
+                    }
                   />
                   <span>{item.label}</span>
                 </div>
-                {isActive && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-accent-600 shrink-0" />
-                )}
+                {isActive && <span className="h-1.5 w-1.5 rounded-full bg-accent-600 shrink-0" />}
               </button>
             );
           })}
@@ -123,22 +115,20 @@ export function Sidebar({
                 hasError
                   ? 'bg-rose-500 shadow-[0_0_0_2px_rgba(244,63,94,0.2)]'
                   : isConnected
-                  ? 'bg-emerald-500 shadow-[0_0_0_2px_rgba(16,185,129,0.2)]'
-                  : 'bg-amber-500 shadow-[0_0_0_2px_rgba(245,158,11,0.2)]'
+                    ? 'bg-emerald-500 shadow-[0_0_0_2px_rgba(16,185,129,0.2)]'
+                    : 'bg-amber-500 shadow-[0_0_0_2px_rgba(245,158,11,0.2)]'
               }`}
             />
             <span className="text-ink-700 text-[11px] font-medium">
               {hasError
                 ? 'BMRS connection error'
                 : isConnected
-                ? 'BMRS data connected'
-                : 'Connecting to BMRS…'}
+                  ? 'BMRS data connected'
+                  : 'Connecting to BMRS…'}
             </span>
           </div>
 
-          <div className="text-[11px] text-ink-500">
-            Great Britain · January 2026
-          </div>
+          <div className="text-[11px] text-ink-500">Great Britain · January 2026</div>
 
           <Badge tone="accent" className="text-[10px] font-bold tracking-wider uppercase py-0.5">
             Procurement Desk

@@ -7,7 +7,8 @@ export function Footer() {
         <div className="flex items-center gap-2">
           <ShieldCheck size={15} className="text-emerald-600 shrink-0" />
           <span>
-            <strong className="font-semibold text-ink-700">Decision support only:</strong> Verify against official market records prior to trading actions.
+            <strong className="font-semibold text-ink-700">Decision support only:</strong> Verify
+            against official market records prior to trading actions.
           </span>
         </div>
         <div className="text-[11px] text-ink-400">

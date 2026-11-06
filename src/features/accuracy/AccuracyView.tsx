@@ -118,11 +118,9 @@ export function AccuracyView({
       )}
 
       {monthlyError && (
-        <Alert
-          tone="error"
-          title="Monthly records unavailable"
-        >
-          Monthly accuracy history could not be retrieved from the backend API. Selected-day metrics remain fully functional.
+        <Alert tone="error" title="Monthly records unavailable">
+          Monthly accuracy history could not be retrieved from the backend API. Selected-day metrics
+          remain fully functional.
         </Alert>
       )}
 
@@ -166,9 +164,10 @@ export function AccuracyView({
         <CircleHelp size={17} className="text-accent-700 shrink-0 mt-0.5" />
         <div className="text-xs text-ink-700 leading-relaxed">
           <strong className="font-semibold text-ink-950">How to interpret these measures:</strong>{' '}
-          MAE and RMSE are expressed in Megawatts (MW); smaller values indicate tighter agreement with actuals.
-          MAPE is calculated only when actual generation is at least 1 MW to avoid distortion near zero output.
-          Mean bias measures systematic over- or under-forecasting (forecast minus actual).
+          MAE and RMSE are expressed in Megawatts (MW); smaller values indicate tighter agreement
+          with actuals. MAPE is calculated only when actual generation is at least 1 MW to avoid
+          distortion near zero output. Mean bias measures systematic over- or under-forecasting
+          (forecast minus actual).
         </div>
       </div>
     </div>

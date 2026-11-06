@@ -42,9 +42,7 @@ export function KpiCard({
         <span>{label}</span>
         <Icon size={16} className={`shrink-0 ${iconToneStyles[tone]}`} />
       </div>
-      <div className="mt-2 text-2xl font-bold tracking-tight text-ink-950 sm:text-2xl">
-        {value}
-      </div>
+      <div className="mt-2 text-2xl font-bold tracking-tight text-ink-950 sm:text-2xl">{value}</div>
       <div className="mt-1 text-xs text-ink-500 leading-normal">{hint}</div>
     </article>
   );

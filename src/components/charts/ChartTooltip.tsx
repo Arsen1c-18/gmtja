@@ -22,13 +22,12 @@ export function ChartTooltip({ active, payload, label, unit = 'MW' }: ChartToolt
   if (!active || !payload || !payload.length) return null;
 
   const row = payload[0]?.payload;
-  const title = row?.fullTime || (row?.publish_time ? stampFmt.format(new Date(row.publish_time)) : label);
+  const title =
+    row?.fullTime || (row?.publish_time ? stampFmt.format(new Date(row.publish_time)) : label);
 
   return (
     <div className="rounded-md border border-ink-200/90 bg-white/95 p-3 shadow-md text-xs font-sans max-w-xs backdrop-blur-sm">
-      <div className="font-semibold text-ink-950 pb-1.5 border-b border-ink-100">
-        {title}
-      </div>
+      <div className="font-semibold text-ink-950 pb-1.5 border-b border-ink-100">{title}</div>
       <div className="pt-1.5 space-y-1">
         {payload.map((entry, idx) => (
           <div key={idx} className="flex items-center justify-between gap-3 text-ink-700">

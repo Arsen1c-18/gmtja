@@ -41,25 +41,15 @@ function CoverageItem({ label, value, expected }: CoverageItemProps) {
 export function CoverageList({ data }: CoverageListProps) {
   return (
     <Card>
-      <CardHeader
-        title="Data coverage"
-        subtitle="Elexon records returned for this delivery day"
-      />
+      <CardHeader title="Data coverage" subtitle="Elexon records returned for this delivery day" />
       <CardContent className="space-y-4">
-        <CoverageItem
-          label="Actual generation intervals"
-          value={data.actual_count}
-          expected={48}
-        />
+        <CoverageItem label="Actual generation intervals" value={data.actual_count} expected={48} />
         <CoverageItem
           label="Day-ahead forecast targets"
           value={data.selected_forecast_count}
           expected={48}
         />
-        <CoverageItem
-          label="Published forecast versions"
-          value={data.version_count}
-        />
+        <CoverageItem label="Published forecast versions" value={data.version_count} />
       </CardContent>
       <CardFooter>
         January 2026 · UK settlement delivery days contain 48 half-hour periods.

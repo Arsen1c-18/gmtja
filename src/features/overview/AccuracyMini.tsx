@@ -17,12 +17,8 @@ interface MetricTileProps {
 function MetricTile({ label, value, explanation }: MetricTileProps) {
   return (
     <div className="rounded-md border border-ink-200/80 bg-ink-50/40 p-3">
-      <div className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
-        {label}
-      </div>
-      <div className="mt-1 text-lg font-bold tracking-tight text-ink-950 font-mono">
-        {value}
-      </div>
+      <div className="text-[10px] font-bold uppercase tracking-wider text-ink-500">{label}</div>
+      <div className="mt-1 text-lg font-bold tracking-tight text-ink-950 font-mono">{value}</div>
       <div className="mt-0.5 text-[11px] text-ink-500">{explanation}</div>
     </div>
   );

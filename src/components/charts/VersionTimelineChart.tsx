@@ -45,10 +45,7 @@ export function VersionTimelineChart({ data, height = 280 }: VersionTimelineChar
               const raw = payload?.[0]?.payload?.publish_time;
               return raw ? `Published ${stampFmt.format(new Date(raw))}` : '';
             }}
-            formatter={(v) => [
-              v == null ? '—' : `${numFmt.format(Number(v))} MW`,
-              'Version MAE',
-            ]}
+            formatter={(v) => [v == null ? '—' : `${numFmt.format(Number(v))} MW`, 'Version MAE']}
             contentStyle={{
               borderRadius: '4px',
               border: '1px solid #e4e4e7',

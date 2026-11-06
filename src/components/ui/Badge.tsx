@@ -19,13 +19,7 @@ const toneStyles: Record<BadgeTone, string> = {
   danger: 'bg-rose-50 text-rose-700 border border-rose-200/70',
 };
 
-export function Badge({
-  tone = 'grey',
-  icon,
-  children,
-  className = '',
-  ...props
-}: BadgeProps) {
+export function Badge({ tone = 'grey', icon, children, className = '', ...props }: BadgeProps) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-sm px-2.5 py-0.5 text-xs font-medium tracking-wide ${toneStyles[tone]} ${className}`}

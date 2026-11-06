@@ -9,13 +9,7 @@ export interface TopbarProps {
   onOpenMobileNav: () => void;
 }
 
-export function Topbar({
-  day,
-  onSelectDay,
-  onRefresh,
-  isLoading,
-  onOpenMobileNav,
-}: TopbarProps) {
+export function Topbar({ day, onSelectDay, onRefresh, isLoading, onOpenMobileNav }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-ink-200/90 bg-white/95 px-4 backdrop-blur-md sm:px-6">
       <div className="flex items-center gap-3">
@@ -39,10 +33,7 @@ export function Topbar({
 
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Proper Interactive Calendar Date Picker */}
-        <CalendarDatePicker
-          selectedDay={day}
-          onSelectDay={onSelectDay}
-        />
+        <CalendarDatePicker selectedDay={day} onSelectDay={onSelectDay} />
 
         {/* Refresh Action */}
         <button

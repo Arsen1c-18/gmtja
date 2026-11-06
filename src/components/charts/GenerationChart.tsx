@@ -18,20 +18,13 @@ export interface GenerationChartProps {
   height?: number;
 }
 
-export function GenerationChart({
-  chartData,
-  compactView = false,
-  height,
-}: GenerationChartProps) {
+export function GenerationChart({ chartData, compactView = false, height }: GenerationChartProps) {
   const chartHeight = height ?? (compactView ? 280 : 360);
 
   return (
     <div style={{ height: chartHeight }} className="w-full pt-2">
       <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart
-          data={chartData}
-          margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
-        >
+        <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
           <CartesianGrid stroke="#e4e4e7" strokeDasharray="2 2" vertical={false} />
           <XAxis
             dataKey="label"

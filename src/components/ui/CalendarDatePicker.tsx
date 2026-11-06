@@ -98,14 +98,19 @@ export function CalendarDatePicker({
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className={`flex h-[34px] items-center gap-2 rounded-md border ${
-          isOpen ? 'border-accent-700 ring-2 ring-accent-700/20' : 'border-ink-200 hover:border-ink-300'
+          isOpen
+            ? 'border-accent-700 ring-2 ring-accent-700/20'
+            : 'border-ink-200 hover:border-ink-300'
         } bg-white px-3 text-xs font-semibold text-ink-900 shadow-2xs transition-all cursor-pointer`}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
       >
         <CalendarDays size={14} className="text-accent-700 shrink-0" />
         <span className="font-mono tracking-tight">{formattedDayTitle}</span>
-        <ChevronDown size={13} className={`text-ink-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          size={13}
+          className={`text-ink-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        />
       </button>
 
       {/* Step Forward Button */}
