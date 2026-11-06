@@ -133,30 +133,25 @@ The full application runs on `http://localhost:8000`; FastAPI serves the built f
 
 ## Deployment
 
-### Backend on Render
+The application deploys as a **single Vercel project**: the React frontend is served statically and the FastAPI backend runs as a Python serverless function on the same origin.
 
-The repository ships a [`render.yaml`](render.yaml) blueprint describing the API web service (Python 3.13 inside `backend/`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health check `/health`). In Render, choose **New → Blueprint**, select the repository and the service applies automatically.
+### How it is wired
 
-Before the first deploy, provide:
+- `api/index.py` — serverless entrypoint; Vercel's Python runtime imports it under `api/` and auto-detects the exported ASGI `app`.
+- Root `requirements.txt` — redirects into `backend/requirements.txt`; Vercel installs function dependencies from the project root.
+- `vercel.json` — routes `/api/(.*)` and `/health` to the function, serves `dist/` statically, and rewrites unknown paths to `index.html` for the SPA. The function is configured with `maxDuration: 60`, 1024 MB memory and `includeFiles: backend/**` so the backend source ships in the bundle.
 
-- `CORS_ORIGINS` — the exact production browser origin, e.g. `https://northstar-wind.vercel.app`.
-- `CORS_ORIGIN_REGEX` — the blueprint defaults to `https://.*\.vercel\.app` so Vercel preview deployments are allowed; set it empty to disable regex matching.
+### Steps
 
-The default `DATA_CACHE_DIR=/tmp/elexon-cache` keeps the JSON cache inside the ephemeral instance storage, so it survives between requests but is refilled after each deploy or restart. Add a Render disk and point `DATA_CACHE_DIR` at it (Starter plan or above) when persistent caching is preferred. Confirm the deployment with `GET /health` and `GET /api/days/2026-01-15`.
+1. Import the repository on Vercel. `vercel.json` pins the Vite framework preset, `npm run build` and the `dist` output; Node is pinned by `engines.node` in `package.json`.
+2. No environment variables are required: the frontend defaults to same-origin requests and the backend reads Elexon from its public base URL.
+3. Confirm the deployment with `GET /health` and a day endpoint, e.g. `GET /api/days/2026-01-15`.
 
-### Frontend on Vercel
+### Operational notes
 
-Import the repository; `vercel.json` pins the Vite framework preset, `npm run build` and the `dist` output. The SPA rewrite routes unknown paths to `index.html`.
-
-- Define `VITE_API_URL` as the deployed Render API origin **before the first build**; it is a compile-time constant, so changing it later requires a redeployment.
-- Node is pinned through `engines.node` in `package.json`.
-
-### Deploy order
-
-1. Create the Render service first to learn its `onrender.com` origin.
-2. Set `VITE_API_URL` on Vercel to that origin and run the first Vercel build.
-3. Add the resulting Vercel production origin to Render's `CORS_ORIGINS` (the `*.vercel.app` regex already covers previews).
-4. Re-run the backend verification commands against the live services.
+- **Cold starts:** a fresh function instance imports pandas/NumPy and may perform the first Elexon download, which adds several seconds; `/api/analytics/monthly` (full forecast history) is the slowest path on a cold cache. A retry after it has warmed the `/tmp` cache succeeds quickly. The disk cache is per instance and an optimization only — missing entries are always refetched.
+- **CORS:** requests are same-origin, so CORS does not apply. `CORS_ORIGINS`/`CORS_ORIGIN_REGEX` remain available for split deployments, e.g. serving the API from a separate host.
+- **Alternates:** a [`render.yaml`](render.yaml) blueprint for hosting the backend on Render's Python runtime is included but is not required for the Vercel flow.
 
 ## Verification
 
