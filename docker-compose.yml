@@ -1,0 +1,17 @@
+services:
+  api:
+    build: .
+    ports: ["8000:8000"]
+    environment:
+      ELEXON_API_BASE: ${ELEXON_API_BASE:-https://data.elexon.co.uk/bmrs/api/v1}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      DATA_CACHE_DIR: /data/cache
+      DATA_CACHE_TTL_SECONDS: ${DATA_CACHE_TTL_SECONDS:-3600}
+    volumes: ["elexon-cache:/data/cache"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  elexon-cache:
