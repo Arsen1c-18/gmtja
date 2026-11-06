@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "react-hooks", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2022": true
+  },
+  "settings": {
+    "react": {
+      "version": "19.3",
+      // Vite + React 19 use the automatic JSX runtime; no React import needed in scope.
+      "jsxRuntime": "automatic"
+    }
+  },
+  "rules": {
+    // Canonical hook-deps lint; oxlint's react/exhaustive-effect-dependencies duplicates it.
+    "react-hooks/exhaustive-deps": "warn",
+    "react/exhaustive-effect-dependencies": "off",
+    // False positive: Vite + React 19 compile JSX with the automatic runtime,
+    // so no React import is required in scope. oxlint currently ignores the
+    // jsxRuntime=automatic setting for this rule.
+    "react/react-in-jsx-scope": "off",
+    // The data-fetching effect intentionally flips `loading` synchronously so the
+    // spinner appears before the await resumes; deriving it during render is not possible.
+    "react/set-state-in-effect": "off",
+    // Surfaces undocumented implicit types; kept advisory until typescript-eslint supports tsgo.
+    "typescript/no-explicit-any": "warn"
+  },
+  "ignorePatterns": ["dist", "node_modules", "backend", ".venv", ".cache"]
+}

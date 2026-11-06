@@ -1,0 +1,21 @@
+# Dependencies and build output
+node_modules/
+dist/
+.venv/
+.cache/
+backend/
+.pytest_cache/
+
+# Single-line minified configs; prettier would inflate these diffs for no benefit
+package.json
+tsconfig.json
+vercel.json
+tsconfig.tsbuildinfo
+package-lock.json
+
+# JSONC (oxlint config contains comments; prettier's json parser rejects them)
+.oxlintrc.json
+
+# Docs and assets
+*.md
+public/
