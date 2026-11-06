@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { OperatorShell } from './components/layout/OperatorShell';
 import type { SectionId } from './components/layout/Sidebar';
 import { SectionHeader } from './components/ui/SectionHeader';
@@ -15,34 +15,36 @@ import type { DailyMetric, DayData } from './types';
 import { mergeChartIntervals } from './utils/chartHelpers';
 import { dateFmt, JANUARY_2026_DAYS } from './utils/formatters';
 
-const SECTION_CONFIG: Record<
-  SectionId,
-  { title: string; eyebrow: string; description: string }
-> = {
+const SECTION_CONFIG: Record<SectionId, { title: string; eyebrow: string; description: string }> = {
   overview: {
     eyebrow: 'Wind generation outlook',
     title: 'Market supply and outturn',
-    description: 'A comprehensive operational view of forecast wind supply and the latest observed outturn.',
+    description:
+      'A comprehensive operational view of forecast wind supply and the latest observed outturn.',
   },
   explorer: {
     eyebrow: 'Granular half-hourly targets',
     title: 'Forecast explorer',
-    description: 'Inspect half-hourly generation records, compare publication revisions, and export settlement intervals.',
+    description:
+      'Inspect half-hourly generation records, compare publication revisions, and export settlement intervals.',
   },
   accuracy: {
     eyebrow: 'Statistical outturn metrics',
     title: 'Forecast accuracy',
-    description: 'Measure forecast deviation, error distributions, and time-of-day accuracy against outturn generation.',
+    description:
+      'Measure forecast deviation, error distributions, and time-of-day accuracy against outturn generation.',
   },
   procurement: {
     eyebrow: 'Volume balancing scenario',
     title: 'Procurement intelligence',
-    description: 'Model illustrative demand baselines to calculate net residual procurement requirements.',
+    description:
+      'Model illustrative demand baselines to calculate net residual procurement requirements.',
   },
   history: {
     eyebrow: 'Sequential model runs',
     title: 'Forecast evolution',
-    description: 'Track how WINDFOR forecast iterations progressed toward the 11:00 day-ahead gate and delivery.',
+    description:
+      'Track how WINDFOR forecast iterations progressed toward the 11:00 day-ahead gate and delivery.',
   },
 };
 
@@ -63,31 +65,34 @@ export default function App() {
 
   const loadSequence = useRef(0);
 
-  const loadData = async (forceRefresh = false) => {
-    const sequence = ++loadSequence.current;
-    setLoading(true);
-    setError('');
+  const loadData = useCallback(
+    async (forceRefresh = false) => {
+      const sequence = ++loadSequence.current;
+      setLoading(true);
+      setError('');
 
-    try {
-      const result = await getDay(day, forceRefresh);
-      if (sequence === loadSequence.current) {
-        setData(result);
-        setSelectedVersion('cutoff');
+      try {
+        const result = await getDay(day, forceRefresh);
+        if (sequence === loadSequence.current) {
+          setData(result);
+          setSelectedVersion('cutoff');
+        }
+      } catch (err) {
+        if (sequence === loadSequence.current) {
+          setError(err instanceof Error ? err.message : 'Could not load Elexon records.');
+        }
+      } finally {
+        if (sequence === loadSequence.current) {
+          setLoading(false);
+        }
       }
-    } catch (err) {
-      if (sequence === loadSequence.current) {
-        setError(err instanceof Error ? err.message : 'Could not load Elexon records.');
-      }
-    } finally {
-      if (sequence === loadSequence.current) {
-        setLoading(false);
-      }
-    }
-  };
+    },
+    [day],
+  );
 
   useEffect(() => {
     void loadData(false);
-  }, [day]);
+  }, [loadData]);
 
   // Arrow key navigation between days
   useEffect(() => {
@@ -133,7 +138,7 @@ export default function App() {
   // Active forecast version resolution
   const cutoffVersion = useMemo(
     () => data?.versions.find((v) => v.publish_time === data.eligible_publish_time) ?? null,
-    [data]
+    [data],
   );
 
   const activeVersion = useMemo(() => {
@@ -145,17 +150,14 @@ export default function App() {
   // Combined chart interval records
   const chartData = useMemo(
     () => mergeChartIntervals(data?.intervals ?? [], activeVersion),
-    [data, activeVersion]
+    [data, activeVersion],
   );
 
   const paired = chartData.filter((row) => row.forecast != null && row.actual != null);
-  const dayForecastMWh = chartData.reduce(
-    (sum, row) => sum + (row.forecast ?? 0) * 0.5,
-    0
-  );
+  const dayForecastMWh = chartData.reduce((sum, row) => sum + (row.forecast ?? 0) * 0.5, 0);
   const totalShortfall = chartData.reduce(
     (sum, row) => sum + (row.forecast == null ? 0 : (demand - row.forecast) * 0.5),
-    0
+    0,
   );
   const errors = paired.map((row) => ({
     label: row.label,
@@ -178,11 +180,7 @@ export default function App() {
       isConnected={Boolean(data)}
     >
       <div className="space-y-6">
-        <SectionHeader
-          eyebrow={meta.eyebrow}
-          title={meta.title}
-          description={meta.description}
-        />
+        <SectionHeader eyebrow={meta.eyebrow} title={meta.title} description={meta.description} />
 
         {/* Global Error Banner */}
         {error && (
@@ -190,11 +188,7 @@ export default function App() {
             tone="error"
             title="Elexon data could not be loaded"
             action={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => void loadData(true)}
-              >
+              <Button variant="outline" size="sm" onClick={() => void loadData(true)}>
                 Retry
               </Button>
             }
