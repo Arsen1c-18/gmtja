@@ -10,6 +10,7 @@ A procurement intelligence workspace for reviewing Great Britain wind generation
 - Procurement estimate based on a configurable fixed demand input.
 - Forecast version history scored against matched actual intervals.
 - Europe/London delivery-day handling, including offset-aware repeated/skipped local times.
+- Fixed-viewport operator shell: the sidebar stays pinned while scrolling is confined to the content pane (on mobile the sidebar is a slide-in drawer).
 - Backend disk cache, CORS configuration and `/health` endpoint.
 
 The product is decision support. It does not model dispatch, market prices, balancing, storage, imports, network constraints or a trading strategy.
@@ -19,7 +20,7 @@ The product is decision support. It does not model dispatch, market prices, bala
 - Frontend: React, TypeScript, Vite, Recharts, Lucide icons and a responsive CSS implementation based on `UI_DESIGN_GUIDE.md`.
 - Backend: Python, FastAPI, Pydantic, NumPy and Pandas-compatible analytics.
 - Quality: oxlint and Prettier for the frontend, Ruff for the backend (`npm run lint`, `npm run format:check`, `ruff check backend`), pytest for backend logic and API tests.
-- Deployment: Docker Compose, Vercel static frontend support and a standalone Python API container.
+- Deployment: single-project Vercel full-stack — static SPA plus the API as a Python serverless function on the same origin; an optional `render.yaml` blueprint is included for hosting the backend on Render instead.
 
 ## Architecture
 
