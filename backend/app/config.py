@@ -1,5 +1,7 @@
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
     elexon_api_base: str = "https://data.elexon.co.uk/bmrs/api/v1"

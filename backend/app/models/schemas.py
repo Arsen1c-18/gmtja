@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Interval(BaseModel):
     start_time: str
     settlement_period: int | None = None

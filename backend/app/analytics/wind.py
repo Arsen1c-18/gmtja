@@ -1,11 +1,11 @@
 from collections import defaultdict
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import UTC, date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
+
 import numpy as np
 import pandas as pd
 
 LONDON = ZoneInfo("Europe/London")
-UTC = timezone.utc
 
 def metrics(actual: list[float], forecast: list[float]) -> dict:
     if not actual:
@@ -13,9 +13,12 @@ def metrics(actual: list[float], forecast: list[float]) -> dict:
     actual_series = pd.Series(actual, dtype="float64")
     error = pd.Series(forecast, dtype="float64") - actual_series
     valid_pct = actual_series.abs() >= 1.0
+    mape_pct = None
+    if valid_pct.any():
+        mape_pct = float((error[valid_pct].abs() / actual_series[valid_pct].abs()).mean() * 100)
     return {"count": int(error.size), "mae_mw": float(error.abs().mean()),
             "rmse_mw": float(np.sqrt(np.square(error).mean())),
-            "mape_pct": float((error[valid_pct].abs() / actual_series[valid_pct].abs()).mean() * 100) if valid_pct.any() else None,
+            "mape_pct": mape_pct,
             "mean_bias_mw": float(error.mean())}
 
 def parse_ts(value: object) -> datetime | None:
@@ -39,8 +42,11 @@ def assemble_day(day: date, actual_rows: list[dict], forecast_rows: list[dict]) 
     actual_publish: dict[datetime, datetime] = {}
     settlement_periods: dict[datetime, int] = {}
     for row in actual_rows:
-        target, published, value = parse_ts(row.get("startTime")), parse_ts(row.get("publishTime")), _number(row.get("generation"))
-        if target and start <= target < end and str(row.get("fuelType", "WIND")).upper() == "WIND" and value is not None:
+        target = parse_ts(row.get("startTime"))
+        published = parse_ts(row.get("publishTime"))
+        value = _number(row.get("generation"))
+        fuel = str(row.get("fuelType", "WIND")).upper()
+        if target and start <= target < end and fuel == "WIND" and value is not None:
             if target not in actual_publish or (published and published >= actual_publish[target]):
                 actuals[target] = value
                 if published: actual_publish[target] = published
@@ -49,16 +55,19 @@ def assemble_day(day: date, actual_rows: list[dict], forecast_rows: list[dict]) 
 
     versions_map: dict[datetime, dict[datetime, float]] = defaultdict(dict)
     for row in forecast_rows:
-        target, published, value = parse_ts(row.get("startTime")), parse_ts(row.get("publishTime")), _number(row.get("generation"))
+        target = parse_ts(row.get("startTime"))
+        published = parse_ts(row.get("publishTime"))
+        value = _number(row.get("generation"))
         if target and published and start <= target < end and value is not None:
             versions_map[published][target] = value
 
     # WINDFOR is hourly while FUELHH is half-hourly. Carry each hourly average
     # forward to the adjacent settlement period so the demand calculation keeps
     # 30-minute energy intervals without pretending the source is more granular.
-    for published, values in list(versions_map.items()):
+    for _published, values in list(versions_map.items()):
         targets = sorted(values)
-        if len(targets) > 1 and min((b - a).total_seconds() for a, b in zip(targets, targets[1:])) >= 3600:
+        adjacent_gaps = [(b - a).total_seconds() for a, b in zip(targets, targets[1:], strict=False)]
+        if len(targets) > 1 and min(adjacent_gaps) >= 3600:
             for target, value in list(values.items()):
                 adjacent = target + timedelta(minutes=30)
                 if adjacent < end and adjacent not in values:
@@ -69,9 +78,16 @@ def assemble_day(day: date, actual_rows: list[dict], forecast_rows: list[dict]) 
     for published, values in sorted(versions_map.items()):
         matched = [(actuals[t], values[t]) for t in values if t in actuals]
         horizon = (min(values) - published).total_seconds() / 3600 if values else None
-        versions.append({"publish_time": published.isoformat(), "horizon_hours": max(0, horizon) if horizon is not None else None,
-                         "mae_mw": metrics([a for a, _ in matched], [f for _, f in matched])["mae_mw"],
-                         "intervals": [{"start_time": t.isoformat(), "forecast_mw": val, "actual_mw": actuals.get(t), "forecast_publish_time": published.isoformat()} for t, val in sorted(values.items())]})
+        versions.append({
+            "publish_time": published.isoformat(),
+            "horizon_hours": max(0, horizon) if horizon is not None else None,
+            "mae_mw": metrics([a for a, _ in matched], [f for _, f in matched])["mae_mw"],
+            "intervals": [
+                {"start_time": t.isoformat(), "forecast_mw": val, "actual_mw": actuals.get(t),
+                 "forecast_publish_time": published.isoformat()}
+                for t, val in sorted(values.items())
+            ],
+        })
     eligible = [v for v in versions if datetime.fromisoformat(v["publish_time"]) <= cutoff]
     selected = max(eligible, key=lambda v: v["publish_time"]) if eligible else None
     latest = max(versions, key=lambda v: v["publish_time"]) if versions else None
@@ -80,12 +96,18 @@ def assemble_day(day: date, actual_rows: list[dict], forecast_rows: list[dict]) 
     intervals = []
     for target in timestamps:
         selected_interval = selected_rows.get(target, {})
-        # ISO offset distinguishes repeated local time during the autumn clock change.
-        intervals.append({"start_time": target.astimezone(LONDON).isoformat(), "settlement_period": settlement_periods.get(target),
-                          "forecast_mw": selected_interval.get("forecast_mw"), "actual_mw": actuals.get(target),
-                          "forecast_publish_time": selected.get("publish_time") if selected else None})
-    pairs = [(i["actual_mw"], i["forecast_mw"]) for i in intervals if i["actual_mw"] is not None and i["forecast_mw"] is not None]
-    return {"date": day.isoformat(), "timezone": "Europe/London", "data_mode": "live", "source": "Elexon BMRS FUELHH + WINDFOR",
+        intervals.append({
+            "start_time": target.astimezone(LONDON).isoformat(),
+            "settlement_period": settlement_periods.get(target),
+            "forecast_mw": selected_interval.get("forecast_mw"),
+            "actual_mw": actuals.get(target),
+            # ISO offset distinguishes repeated local time during the autumn clock change.
+            "forecast_publish_time": selected.get("publish_time") if selected else None,
+        })
+    pairs = [(i["actual_mw"], i["forecast_mw"]) for i in intervals
+             if i["actual_mw"] is not None and i["forecast_mw"] is not None]
+    return {"date": day.isoformat(), "timezone": "Europe/London", "data_mode": "live",
+            "source": "Elexon BMRS FUELHH + WINDFOR",
             "actual_count": len(actuals), "forecast_count": sum(len(v) for v in versions_map.values()),
             "selected_forecast_count": len(selected["intervals"]) if selected else 0, "version_count": len(versions),
             "cutoff": cutoff.isoformat(), "intervals": intervals, "versions": versions,

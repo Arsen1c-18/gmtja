@@ -1,6 +1,8 @@
 import asyncio
 from datetime import date, timedelta
+
 from fastapi import APIRouter, HTTPException, Query
+
 from app.analytics.wind import assemble_day, procurement
 from app.models.schemas import DayResponse, ProcurementResponse
 from app.services.elexon import ElexonClient, ElexonError
@@ -26,7 +28,11 @@ async def get_procurement(day: date, demand_mw: float = Query(30000, gt=0, le=10
 @router.get("/days/{day}/actuals")
 async def get_actuals(day: date):
     data = await get_day(day)
-    return {"date": data["date"], "source": "Elexon BMRS FUELHH", "intervals": [row for row in data["intervals"] if row["actual_mw"] is not None]}
+    return {
+        "date": data["date"],
+        "source": "Elexon BMRS FUELHH",
+        "intervals": [row for row in data["intervals"] if row["actual_mw"] is not None],
+    }
 
 @router.get("/days/{day}/forecasts")
 async def get_forecast_versions(day: date):

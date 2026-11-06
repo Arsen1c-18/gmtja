@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 from typing import Any
 
+
 class JsonCache:
     def __init__(self, directory: str, ttl_seconds: int):
         self.directory = Path(directory)
