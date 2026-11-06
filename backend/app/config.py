@@ -6,6 +6,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     elexon_api_base: str = "https://data.elexon.co.uk/bmrs/api/v1"
     cors_origins: str = "http://localhost:5173"
+    # Matches Vercel preview subdomains; blank the var with CORS_ORIGIN_REGEX= to disable.
+    cors_origin_regex: str = r"https://.*\.vercel\.app"
     data_cache_dir: str = ".cache/elexon"
     data_cache_ttl_seconds: int = 3600
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -13,6 +15,10 @@ class Settings(BaseSettings):
     @property
     def allowed_origins(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def origin_regex(self) -> str | None:
+        return self.cors_origin_regex.strip() or None
 
 @lru_cache
 def get_settings() -> Settings:
