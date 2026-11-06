@@ -127,18 +127,36 @@ The full application runs on `http://localhost:8000`; FastAPI serves the built f
 | `VITE_API_URL` | Browser-visible API base URL | empty (same origin) |
 | `ELEXON_API_BASE` | Elexon Insights API root | `https://data.elexon.co.uk/bmrs/api/v1` |
 | `CORS_ORIGINS` | Comma-separated allowed browser origins | `http://localhost:5173` |
+| `CORS_ORIGIN_REGEX` | Optional regex for extra origins (Vercel previews) | `https://.*\.vercel\.app` |
 | `DATA_CACHE_DIR` | JSON cache directory | `.cache/elexon` |
 | `DATA_CACHE_TTL_SECONDS` | Cache lifetime | `3600` |
 
 ## Deployment
 
+### Backend on Render
+
+The repository ships a [`render.yaml`](render.yaml) blueprint describing the API web service (Python 3.13 inside `backend/`, build `pip install -r requirements.txt`, start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`, health check `/health`). In Render, choose **New → Blueprint**, select the repository and the service applies automatically.
+
+Before the first deploy, provide:
+
+- `CORS_ORIGINS` — the exact production browser origin, e.g. `https://northstar-wind.vercel.app`.
+- `CORS_ORIGIN_REGEX` — the blueprint defaults to `https://.*\.vercel\.app` so Vercel preview deployments are allowed; set it empty to disable regex matching.
+
+The default `DATA_CACHE_DIR=/tmp/elexon-cache` keeps the JSON cache inside the ephemeral instance storage, so it survives between requests but is refilled after each deploy or restart. Add a Render disk and point `DATA_CACHE_DIR` at it (Starter plan or above) when persistent caching is preferred. Confirm the deployment with `GET /health` and `GET /api/days/2026-01-15`.
+
 ### Frontend on Vercel
 
-Import the repository, set the framework to Vite, build command `npm run build`, output directory `dist`, and define `VITE_API_URL` as the deployed API origin. Add that Vercel origin to backend `CORS_ORIGINS`.
+Import the repository; `vercel.json` pins the Vite framework preset, `npm run build` and the `dist` output. The SPA rewrite routes unknown paths to `index.html`.
 
-### Backend
+- Define `VITE_API_URL` as the deployed Render API origin **before the first build**; it is a compile-time constant, so changing it later requires a redeployment.
+- Node is pinned through `engines.node` in `package.json`.
 
-Deploy the root Dockerfile to a Python container host (or deploy `backend/` with `uvicorn app.main:app --host 0.0.0.0 --port $PORT`). Set `ELEXON_API_BASE`, `CORS_ORIGINS`, `DATA_CACHE_DIR` to persistent storage when available, and an appropriate cache TTL. Configure the host health check as `/health`. No deployment has been performed from this repository.
+### Deploy order
+
+1. Create the Render service first to learn its `onrender.com` origin.
+2. Set `VITE_API_URL` on Vercel to that origin and run the first Vercel build.
+3. Add the resulting Vercel production origin to Render's `CORS_ORIGINS` (the `*.vercel.app` regex already covers previews).
+4. Re-run the backend verification commands against the live services.
 
 ## Verification
 
